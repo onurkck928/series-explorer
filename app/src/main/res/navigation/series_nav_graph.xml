@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/series_nav_graph"
+    app:startDestination="@id/seriesFeedFragment">
+
+    <fragment
+        android:id="@+id/seriesFeedFragment"
+        android:name="com.onurkucuk.seriesexplorer.ui.fragments.SeriesFeedFragment"
+        android:label="fragment_series_feed"
+        tools:layout="@layout/fragment_series_feed" >
+        <action
+            android:id="@+id/action_seriesFeedFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/seriesDetailsFragment"
+        android:name="com.onurkucuk.seriesexplorer.ui.fragments.SeriesDetailsFragment"
+        android:label="fragment_series_details"
+        tools:layout="@layout/fragment_series_details" />
+</navigation>
