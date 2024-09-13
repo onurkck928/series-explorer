@@ -1,4 +1,4 @@
-package com.onurkucuk.seriesexplorer
+package com.onurkucuk.seriesexplorer.models
 
 data class Series(
     val adult: Boolean,

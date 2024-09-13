@@ -1,6 +1,6 @@
 package com.onurkucuk.seriesexplorer.network
 
-import com.onurkucuk.seriesexplorer.SeriesResponse
+import com.onurkucuk.seriesexplorer.models.SeriesResponse
 import com.onurkucuk.seriesexplorer.util.Constants.Companion.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET

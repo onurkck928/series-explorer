@@ -7,7 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.onurkucuk.seriesexplorer.R
+import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
+import com.onurkucuk.seriesexplorer.models.Series
+import com.onurkucuk.seriesexplorer.network.SeriesRetrofitInstance
+
+import kotlinx.coroutines.runBlocking
 
 
 class SeriesFeedFragment : Fragment() {
@@ -23,6 +30,27 @@ class SeriesFeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val seriesList = mutableListOf<Series>()
+
+        runBlocking{
+            SeriesRetrofitInstance.seriesAPI.getSeriesList().body()?.let {
+                for(result in it.results) {
+                    println(result.name)
+                    seriesList.add(result)
+                }
+            }
+        }
+
+        for(result in seriesList) {
+            println(result.name)
+        }
+
+        val adapter = SeriesFeedAdapter(seriesList)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.seriesFeedRecycler)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this.context)
+
 
     }
 }

@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.onurkucuk.seriesexplorer.R
+import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
+import com.onurkucuk.seriesexplorer.models.Series
 import com.onurkucuk.seriesexplorer.network.SeriesRetrofitInstance
 import kotlinx.coroutines.runBlocking
 
@@ -20,13 +22,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        runBlocking {
-            SeriesRetrofitInstance.seriesAPI.getSeriesList().body()?.let {
-                for(result in it.results) {
-                    println(result.name)
-                }
-            }
 
-        }
     }
 }
