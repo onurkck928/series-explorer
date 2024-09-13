@@ -6,4 +6,7 @@ plugins {
     val room_version = "2.6.1"
 
     id("androidx.room") version room_version apply false
+
+    id("com.android.library") version "8.2.0" apply false
+    id("com.google.devtools.ksp") version "1.9.21-1.0.15" apply false
 }
