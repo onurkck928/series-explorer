@@ -5,13 +5,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
+import com.onurkucuk.seriesexplorer.database.SeriesDatabase
 import com.onurkucuk.seriesexplorer.models.Series
 import com.onurkucuk.seriesexplorer.network.SeriesRetrofitInstance
+import com.onurkucuk.seriesexplorer.repository.SeriesRepository
+import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModel
+import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModelProviderFactory
 import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var viewModel : SeriesViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,6 +29,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        val seriesRepository = SeriesRepository(SeriesDatabase.invoke(this))
+        val viewModelProviderFactory = SeriesViewModelProviderFactory(seriesRepository)
+        viewModel = ViewModelProvider(this, viewModelProviderFactory).get(SeriesViewModel::class.java)
 
     }
 }

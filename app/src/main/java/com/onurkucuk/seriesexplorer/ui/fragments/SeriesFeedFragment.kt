@@ -13,6 +13,8 @@ import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
 import com.onurkucuk.seriesexplorer.models.Series
 import com.onurkucuk.seriesexplorer.network.SeriesRetrofitInstance
+import com.onurkucuk.seriesexplorer.ui.MainActivity
+import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModel
 
 import kotlinx.coroutines.runBlocking
 
@@ -20,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 class SeriesFeedFragment : Fragment() {
 
 
+    lateinit var viewModel: SeriesViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,7 +33,7 @@ class SeriesFeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel = (activity as MainActivity).viewModel
         val seriesList = mutableListOf<Series>()
 
         runBlocking{
