@@ -16,7 +16,11 @@ class SeriesViewModel(
     val seriesList: MutableLiveData<Resources<SeriesResponse>> = MutableLiveData()
     var seriesListPageNumber = 1
 
-    fun getSeriesList(pageNumber: Int) = viewModelScope.launch {
+    init {
+        getSeriesList()
+    }
+
+    fun getSeriesList(pageNumber: Int = 1) = viewModelScope.launch {
         seriesList.postValue(Resources.Loading())
         val response = seriesRepository.getSeriesList(pageNumber)
         seriesList.postValue(handleSeriesResponse(response))

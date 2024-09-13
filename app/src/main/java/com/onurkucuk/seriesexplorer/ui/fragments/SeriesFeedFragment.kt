@@ -1,23 +1,20 @@
 package com.onurkucuk.seriesexplorer.ui.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.navigation.findNavController
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
 import com.onurkucuk.seriesexplorer.databinding.FragmentSeriesFeedBinding
 import com.onurkucuk.seriesexplorer.models.Series
-import com.onurkucuk.seriesexplorer.network.SeriesRetrofitInstance
 import com.onurkucuk.seriesexplorer.ui.MainActivity
 import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModel
-
-import kotlinx.coroutines.runBlocking
+import com.onurkucuk.seriesexplorer.util.Resources
 
 
 class SeriesFeedFragment : Fragment() {
@@ -49,7 +46,26 @@ class SeriesFeedFragment : Fragment() {
 
         setupRecyclerView()
 
+        viewModel.seriesList.observe(viewLifecycleOwner, Observer { response ->
 
+            when(response) {
+                is Resources.Success -> {
+                    hideProgressBar()
+                    seriesFeedAdapter.addSeriesList(response.data?.results)
+                }
+                is Resources.Error -> {
+                    hideProgressBar()
+                    response.message?.let {
+                        Toast.makeText(this.context,"An error occurred! $it", Toast.LENGTH_LONG).show()
+                    }
+
+                }
+                is Resources.Loading -> {
+                    showProgressBar()
+                }
+            }
+
+        })
 
 
     }
@@ -61,6 +77,14 @@ class SeriesFeedFragment : Fragment() {
 
         seriesRecyclerView.adapter = seriesFeedAdapter
         seriesRecyclerView.layoutManager = LinearLayoutManager(this.context)
+    }
+
+    private fun hideProgressBar() {
+        // not implemented yet
+    }
+
+    private fun showProgressBar() {
+        // not implemented yet
     }
 
     override fun onDestroyView() {

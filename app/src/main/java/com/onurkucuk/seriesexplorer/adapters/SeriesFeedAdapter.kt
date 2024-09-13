@@ -10,7 +10,7 @@ import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.models.Series
 
 
-class SeriesFeedAdapter(private val seriesList: List<Series>) : RecyclerView.Adapter<SeriesFeedAdapter.SeriesFeedViewHolder>() {
+class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerView.Adapter<SeriesFeedAdapter.SeriesFeedViewHolder>() {
 
     inner class SeriesFeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -38,5 +38,12 @@ class SeriesFeedAdapter(private val seriesList: List<Series>) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: SeriesFeedViewHolder, position: Int) {
         holder.onBind()
+    }
+
+    fun addSeriesList(list :List<Series>?) {
+        list?.let {
+            seriesList.addAll(list)
+            notifyDataSetChanged()
+        }
     }
 }
