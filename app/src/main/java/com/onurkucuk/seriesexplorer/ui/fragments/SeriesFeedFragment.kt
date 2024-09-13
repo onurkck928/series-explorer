@@ -23,10 +23,6 @@ class SeriesFeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val button = view.findViewById<Button>(R.id.first)
-        button.setOnClickListener {
 
-            view.findNavController().navigate(R.id.action_seriesFeedFragment_to_seriesDetailsFragment)
-        }
     }
 }
