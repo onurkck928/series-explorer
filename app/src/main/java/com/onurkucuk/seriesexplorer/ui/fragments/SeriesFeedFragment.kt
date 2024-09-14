@@ -105,7 +105,7 @@ class SeriesFeedFragment : Fragment() {
                 is Resources.Error -> {
                     hideProgressBar()
                     response.message?.let {
-                        Toast.makeText(this.context,"An error occurred! $it", Toast.LENGTH_LONG).show()
+                        Toast.makeText(activity,"An error occurred! $it", Toast.LENGTH_LONG).show()
                     }
 
                 }

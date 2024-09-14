@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val seriesRepository = SeriesRepository(SeriesDatabase.invoke(this))
-        val viewModelProviderFactory = SeriesViewModelProviderFactory(seriesRepository)
+        val viewModelProviderFactory = SeriesViewModelProviderFactory(application, seriesRepository)
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(SeriesViewModel::class.java)
 
     }
