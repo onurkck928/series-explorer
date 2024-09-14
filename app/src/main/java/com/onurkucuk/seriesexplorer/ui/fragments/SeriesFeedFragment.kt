@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -77,7 +78,9 @@ class SeriesFeedFragment : Fragment() {
         seriesRecyclerView = binding.seriesFeedRecycler
 
         seriesRecyclerView.adapter = seriesFeedAdapter
-            seriesRecyclerView.layoutManager = GridLayoutManager(this.context, 2)
+        seriesRecyclerView.layoutManager = LinearLayoutManager(this.context)
+
+        seriesRecyclerView.addOnScrollListener(this.scrollListener)
     }
 
     private fun observeSeriesList() {
@@ -87,7 +90,14 @@ class SeriesFeedFragment : Fragment() {
             when(response) {
                 is Resources.Success -> {
                     hideProgressBar()
-                    seriesFeedAdapter.addSeriesList(response.data?.results)
+                    response.data?.let {
+                        seriesFeedAdapter.addSeriesList(response.data.results)
+                        isLastPage = viewModel.seriesPageNumber == response.data.total_pages
+                        if(isLastPage) {
+                            seriesRecyclerView.setPadding(0,0,0,0)
+                        }
+                    }
+
                 }
                 is Resources.Error -> {
                     hideProgressBar()
@@ -111,7 +121,13 @@ class SeriesFeedFragment : Fragment() {
             when(response) {
                 is Resources.Success -> {
                     hideProgressBar()
-                    seriesFeedAdapter.addSeriesList(response.data?.results)
+                    response.data?.let {
+                        seriesFeedAdapter.addSeriesList(response.data.results)
+                        isLastPage = viewModel.searchedSeriesPageNumber == response.data.total_pages
+                        if(isLastPage) {
+                            seriesRecyclerView.setPadding(0,0,0,0)
+                        }
+                    }
                 }
                 is Resources.Error -> {
                     hideProgressBar()
@@ -136,18 +152,69 @@ class SeriesFeedFragment : Fragment() {
             job = MainScope().launch {
                 delay(SEARCH_SERIES_TIME_DELAY)
                 if(editable.toString().isNotEmpty()) {
+                    viewModel.searchedSeriesPageNumber = 1
+                    viewModel.searchedSeriesResponse = null
+                    seriesFeedAdapter.reset()
                     viewModel.getSearchedSeries(editable.toString())
+                }
+                else {
+                    viewModel.seriesPageNumber = 1
+                    viewModel.seriesListResponse = null
+                    seriesFeedAdapter.reset()
+                    viewModel.getSeriesList()
                 }
             }
         }
     }
 
     private fun hideProgressBar() {
-        // not implemented yet
+        isLoading = false
     }
 
     private fun showProgressBar() {
-        // not implemented yet
+        isLoading = true
+    }
+
+    var isLoading = false
+    var isLastPage = false
+    var isScrolling = false
+
+    val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = seriesRecyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+
+            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItemPosition >= 0
+            val isTotalMoreThanVisible = if (binding.searchBar.text.isEmpty()) {
+                totalItemCount >= viewModel.seriesPageItemCount
+            } else {
+                totalItemCount >= viewModel.searchedSeriesPageItemCount
+            }
+
+            val shouldPaginate = !isLoading && !isLastPage && isNotAtBeginning && isAtLastItem && isTotalMoreThanVisible && isScrolling
+            if(shouldPaginate) {
+                if(binding.searchBar.text.isEmpty()) {
+                    viewModel.getSeriesList()
+                }
+                else {
+                    viewModel.getSearchedSeries(binding.searchBar.text.toString())
+                }
+                isScrolling = false
+
+          }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScrolling = true
+            }
+        }
     }
 
     override fun onDestroyView() {

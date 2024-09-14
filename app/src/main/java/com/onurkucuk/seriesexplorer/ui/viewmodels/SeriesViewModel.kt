@@ -17,23 +17,28 @@ class SeriesViewModel(
     // For getting all series
     val seriesList: MutableLiveData<Resources<SeriesResponse>> = MutableLiveData()
     var seriesPageNumber = 1
+    var seriesPageItemCount = 0
+    var seriesListResponse: SeriesResponse? = null
 
     // For getting the searched series
     val searchedSeries: MutableLiveData<Resources<SeriesResponse>> = MutableLiveData()
     var searchedSeriesPageNumber = 1
+    var searchedSeriesPageItemCount = 0
+    var searchedSeriesResponse: SeriesResponse? = null
+
 
     init {
         getSeriesList()
     }
 
-    fun getSeriesList(pageNumber: Int = 1) = viewModelScope.launch {
+    fun getSeriesList() = viewModelScope.launch {
         seriesList.postValue(Resources.Loading())
-        val response = seriesRepository.getSeriesList(pageNumber)
+        val response = seriesRepository.getSeriesList(seriesPageNumber)
         seriesList.postValue(handleSeriesResponse(response))
 
     }
 
-    fun getSearchedSeries(searchQuery: String,) = viewModelScope.launch {
+    fun getSearchedSeries(searchQuery: String) = viewModelScope.launch {
         searchedSeries.postValue(Resources.Loading())
         val response = seriesRepository.getSearchedSeries(searchQuery, searchedSeriesPageNumber)
         seriesList.postValue(handleSearchedSeriesResponse(response))
@@ -44,7 +49,16 @@ class SeriesViewModel(
     private fun handleSeriesResponse(response: Response<SeriesResponse>) : Resources<SeriesResponse>{
         if(response.isSuccessful) {
             response.body()?.let {
-                return Resources.Success(it)
+                seriesPageNumber++
+                seriesPageItemCount = it.results.size
+                if(seriesListResponse == null) {
+                    seriesListResponse = it
+                } else {
+                    val oldSeries = seriesListResponse?.results
+                    val newSeries = it.results
+                    oldSeries?.addAll(newSeries)
+                }
+                return Resources.Success(seriesListResponse ?: it)
             }
         }
         return Resources.Error(message = response.message())
@@ -53,7 +67,16 @@ class SeriesViewModel(
     private fun handleSearchedSeriesResponse(response: Response<SeriesResponse>) : Resources<SeriesResponse>{
         if(response.isSuccessful) {
             response.body()?.let {
-                return Resources.Success(it)
+                searchedSeriesPageNumber++
+                searchedSeriesPageItemCount = it.results.size
+                if(searchedSeriesResponse == null) {
+                    searchedSeriesResponse = it
+                } else {
+                    val oldSeries = searchedSeriesResponse?.results
+                    val newSeries = it.results
+                    oldSeries?.addAll(newSeries)
+                }
+                return Resources.Success(searchedSeriesResponse ?: it)
             }
         }
         return Resources.Error(message = response.message())

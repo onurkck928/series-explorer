@@ -10,7 +10,7 @@ interface SeriesAPI {
 
     @GET("tv/top_rated")
     suspend fun getSeriesList(
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): Response<SeriesResponse>
 
@@ -18,7 +18,7 @@ interface SeriesAPI {
     suspend fun searchForSeries(
         @Query("query")
         searchQuery: String,
-        @Query("page") page: Int = 1,
+        @Query("page") page: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): Response<SeriesResponse>
 

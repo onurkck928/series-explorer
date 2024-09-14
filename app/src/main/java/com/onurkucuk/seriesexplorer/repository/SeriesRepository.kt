@@ -9,7 +9,7 @@ class SeriesRepository(
     val seriesDatabase: SeriesDatabase
 ) {
     // Network
-    suspend fun getSeriesList(pageNumber: Int) = SeriesRetrofitInstance.seriesAPI.getSeriesList()
+    suspend fun getSeriesList(pageNumber: Int) = SeriesRetrofitInstance.seriesAPI.getSeriesList(pageNumber)
 
     suspend fun getSearchedSeries(searchQuery: String, pageNumber: Int) =
         SeriesRetrofitInstance.seriesAPI.searchForSeries(searchQuery, pageNumber)

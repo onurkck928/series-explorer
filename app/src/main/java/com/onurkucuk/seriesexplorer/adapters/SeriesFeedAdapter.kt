@@ -54,4 +54,8 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
             notifyDataSetChanged()
         }
     }
+    fun reset() {
+        seriesList.clear()
+        notifyDataSetChanged()
+    }
 }
