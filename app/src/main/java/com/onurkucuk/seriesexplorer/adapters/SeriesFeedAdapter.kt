@@ -16,7 +16,7 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
 
         fun onBind(series: Series) {
             itemBinding.seriesNameText.text = series.name
-            Picasso.get().load("${BASE_IMAGE_URL}${series.backdrop_path}").into(itemBinding.leftImage)
+            Picasso.get().load("${BASE_IMAGE_URL}${series.backdrop_path}").into(itemBinding.seriesImage)
 
         }
 

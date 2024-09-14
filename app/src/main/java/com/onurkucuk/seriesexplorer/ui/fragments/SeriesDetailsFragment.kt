@@ -38,8 +38,15 @@ class SeriesDetailsFragment : Fragment() {
         viewModel = (activity as MainActivity).viewModel
 
         series = SeriesViewModel.seriesList[arguments?.getInt("position") ?: 0]
-        binding.textView.text = series.name
-        Picasso.get().load("$BASE_IMAGE_URL${series.backdrop_path}").into(binding.imageView)
+
+        binding.seriesNameTextView.text = series.name
+        binding.originalNameTextView.text = series.original_name
+        binding.originalLanguageTextView.text = series.original_language
+        binding.firstAirDateTextView.text = series.first_air_date
+        binding.overviewTextView.text = series.overview
+        Picasso.get().load("$BASE_IMAGE_URL${series.backdrop_path}").into(binding.backdropImageView)
+        Picasso.get().load("$BASE_IMAGE_URL${series.poster_path}").into(binding.posterImageView)
+
     }
 
 
