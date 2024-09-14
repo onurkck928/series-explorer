@@ -7,29 +7,25 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.onurkucuk.seriesexplorer.R
+import com.onurkucuk.seriesexplorer.databinding.SeriesFeedRecyclerRowBinding
 import com.onurkucuk.seriesexplorer.models.Series
 
 
 class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerView.Adapter<SeriesFeedAdapter.SeriesFeedViewHolder>() {
 
-    inner class SeriesFeedViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class SeriesFeedViewHolder(private val itemBinding: SeriesFeedRecyclerRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
-        val nameText = itemView.findViewById<TextView>(R.id.seriesNameText)
-        val leftImage = itemView.findViewById<ImageView>(R.id.leftImage)
-        val rightImage = itemView.findViewById<ImageView>(R.id.rightImage)
 
-        fun onBind() {
-            nameText.text = "Frieren"
-            leftImage.setImageResource(R.drawable.ic_launcher_background)
-            rightImage.setImageResource(R.drawable.ic_launcher_background)
-
+        fun onBind(series: Series) {
+            itemBinding.seriesNameText.text = series.name
+            itemBinding.leftImage.setImageResource(R.drawable.ic_launcher_background)
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeriesFeedViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.series_feed_recycler_row, parent, false)
-        return SeriesFeedViewHolder(view)
+        val itemBinding = SeriesFeedRecyclerRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SeriesFeedViewHolder(itemBinding)
     }
 
     override fun getItemCount(): Int {
@@ -37,7 +33,7 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
     }
 
     override fun onBindViewHolder(holder: SeriesFeedViewHolder, position: Int) {
-        holder.onBind()
+        holder.onBind(seriesList[position])
     }
 
     fun addSeriesList(list :List<Series>?) {
