@@ -11,11 +11,11 @@ import com.onurkucuk.seriesexplorer.models.Series
 interface SeriesDao {
 
     @Insert
-    suspend fun addSeries(vararg series: Series)
+    suspend fun saveSeries(vararg series: Series)
 
     @Delete
     suspend fun removeSeries(series: Series)
 
     @Query("SELECT * FROM series")
-    fun getAllSeries(): LiveData<List<Series>>
+    fun getSavedSeries(): LiveData<List<Series>>
 }

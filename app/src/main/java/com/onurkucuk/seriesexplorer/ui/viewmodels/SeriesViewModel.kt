@@ -3,6 +3,7 @@ package com.onurkucuk.seriesexplorer.ui.viewmodels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.onurkucuk.seriesexplorer.models.Series
 import com.onurkucuk.seriesexplorer.models.SeriesResponse
 import com.onurkucuk.seriesexplorer.repository.SeriesRepository
 import com.onurkucuk.seriesexplorer.util.Resources
@@ -58,4 +59,13 @@ class SeriesViewModel(
         return Resources.Error(message = response.message())
     }
 
+    fun saveSeries(vararg series: Series) = viewModelScope.launch {
+        seriesRepository.saveSeries(*series)
+    }
+
+    fun removeSeries(series: Series) = viewModelScope.launch {
+        seriesRepository.removeSeries(series)
+    }
+
+    fun getSavedSeries() = seriesRepository.getSavedSeries()
 }
