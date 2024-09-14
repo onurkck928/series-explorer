@@ -1,14 +1,12 @@
 package com.onurkucuk.seriesexplorer.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.databinding.SeriesFeedRecyclerRowBinding
 import com.onurkucuk.seriesexplorer.models.Series
+import com.onurkucuk.seriesexplorer.util.Constants.Companion.BASE_IMAGE_URL
+import com.squareup.picasso.Picasso
 
 
 class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerView.Adapter<SeriesFeedAdapter.SeriesFeedViewHolder>() {
@@ -18,7 +16,8 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
 
         fun onBind(series: Series) {
             itemBinding.seriesNameText.text = series.name
-            itemBinding.leftImage.setImageResource(R.drawable.ic_launcher_background)
+            Picasso.get().load("${BASE_IMAGE_URL}${series.backdrop_path}").into(itemBinding.leftImage)
+
         }
 
     }
