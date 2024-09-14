@@ -10,7 +10,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.onurkucuk.seriesexplorer.R
@@ -36,7 +35,7 @@ class SeriesFeedFragment : Fragment() {
     // Properties
     lateinit var viewModel: SeriesViewModel
     lateinit var seriesFeedAdapter: SeriesFeedAdapter
-    val seriesList = mutableListOf<Series>()
+    lateinit var seriesList: MutableList<Series>
     lateinit var seriesRecyclerView: RecyclerView
 
     override fun onCreateView(
@@ -54,11 +53,15 @@ class SeriesFeedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).viewModel
 
+        seriesList = SeriesViewModel.seriesList
+
         setupRecyclerView()
 
         seriesFeedAdapter.setOnItemClickListener {
-
-            findNavController().navigate(R.id.action_seriesFeedFragment_to_seriesDetailsFragment)
+            val bundle = Bundle().apply {
+                putInt("position", seriesList.indexOf(it))
+            }
+            findNavController().navigate(R.id.action_seriesFeedFragment_to_seriesDetailsFragment, bundle)
         }
 
         observeSeriesList()
@@ -154,13 +157,11 @@ class SeriesFeedFragment : Fragment() {
                 if(editable.toString().isNotEmpty()) {
                     viewModel.searchedSeriesPageNumber = 1
                     viewModel.searchedSeriesResponse = null
-                    seriesFeedAdapter.reset()
                     viewModel.getSearchedSeries(editable.toString())
                 }
                 else {
                     viewModel.seriesPageNumber = 1
                     viewModel.seriesListResponse = null
-                    seriesFeedAdapter.reset()
                     viewModel.getSeriesList()
                 }
             }

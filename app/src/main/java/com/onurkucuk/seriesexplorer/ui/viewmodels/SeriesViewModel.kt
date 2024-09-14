@@ -26,7 +26,10 @@ class SeriesViewModel(
     var searchedSeriesPageItemCount = 0
     var searchedSeriesResponse: SeriesResponse? = null
 
-
+    // The list that stores series
+    companion object {
+         val seriesList = mutableListOf<Series>()
+    }
     init {
         getSeriesList()
     }
