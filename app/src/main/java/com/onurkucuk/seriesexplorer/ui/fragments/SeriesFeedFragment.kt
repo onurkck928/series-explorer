@@ -8,9 +8,11 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
 import com.onurkucuk.seriesexplorer.databinding.FragmentSeriesFeedBinding
 import com.onurkucuk.seriesexplorer.models.Series
@@ -53,7 +55,33 @@ class SeriesFeedFragment : Fragment() {
 
         setupRecyclerView()
 
-        // for getting all series
+        seriesFeedAdapter.setOnItemClickListener {
+
+            findNavController().navigate(R.id.action_seriesFeedFragment_to_seriesDetailsFragment)
+        }
+
+        observeSeriesList()
+
+        addSearchBar()
+
+        observeSearchedSeries()
+
+
+
+
+    }
+
+    private fun setupRecyclerView() {
+
+        seriesFeedAdapter = SeriesFeedAdapter(seriesList)
+        seriesRecyclerView = binding.seriesFeedRecycler
+
+        seriesRecyclerView.adapter = seriesFeedAdapter
+            seriesRecyclerView.layoutManager = GridLayoutManager(this.context, 2)
+    }
+
+    private fun observeSeriesList() {
+
         viewModel.seriesList.observe(viewLifecycleOwner, Observer { response ->
 
             when(response) {
@@ -74,18 +102,9 @@ class SeriesFeedFragment : Fragment() {
             }
 
         })
+    }
 
-        // for getting searched series
-        var job: Job? = null
-        binding.searchBar.addTextChangedListener { editable ->
-            job?.cancel()
-            job = MainScope().launch {
-                delay(SEARCH_SERIES_TIME_DELAY)
-                if(editable.toString().isNotEmpty()) {
-                    viewModel.getSearchedSeries(editable.toString())
-                }
-            }
-        }
+    private fun observeSearchedSeries() {
 
         viewModel.searchedSeries.observe(viewLifecycleOwner, Observer { response ->
 
@@ -107,17 +126,20 @@ class SeriesFeedFragment : Fragment() {
             }
 
         })
-
-
     }
 
-    private fun setupRecyclerView() {
+    private fun addSearchBar() {
 
-        seriesFeedAdapter = SeriesFeedAdapter(seriesList)
-        seriesRecyclerView = binding.seriesFeedRecycler
-
-        seriesRecyclerView.adapter = seriesFeedAdapter
-            seriesRecyclerView.layoutManager = GridLayoutManager(this.context, 2)
+        var job: Job? = null
+        binding.searchBar.addTextChangedListener { editable ->
+            job?.cancel()
+            job = MainScope().launch {
+                delay(SEARCH_SERIES_TIME_DELAY)
+                if(editable.toString().isNotEmpty()) {
+                    viewModel.getSearchedSeries(editable.toString())
+                }
+            }
+        }
     }
 
     private fun hideProgressBar() {

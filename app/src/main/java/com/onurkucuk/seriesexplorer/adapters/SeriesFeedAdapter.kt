@@ -32,9 +32,21 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
     }
 
     override fun onBindViewHolder(holder: SeriesFeedViewHolder, position: Int) {
-        holder.onBind(seriesList[position])
+        val series: Series = seriesList[position]
+
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.let {
+                it(series)
+            }
+        }
+        holder.onBind(series)
     }
 
+    private var onItemClickListener: ((Series) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (Series) -> Unit) {
+        onItemClickListener = listener
+    }
     fun addSeriesList(list :List<Series>?) {
         list?.let {
             seriesList.clear()
