@@ -37,6 +37,7 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
 
     fun addSeriesList(list :List<Series>?) {
         list?.let {
+            seriesList.clear()
             seriesList.addAll(list)
             notifyDataSetChanged()
         }

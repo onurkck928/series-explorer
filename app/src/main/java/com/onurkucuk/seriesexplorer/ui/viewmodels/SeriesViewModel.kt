@@ -13,8 +13,13 @@ class SeriesViewModel(
     val seriesRepository: SeriesRepository
 ) : ViewModel() {
 
+    // For getting all series
     val seriesList: MutableLiveData<Resources<SeriesResponse>> = MutableLiveData()
-    var seriesListPageNumber = 1
+    var seriesPageNumber = 1
+
+    // For getting the searched series
+    val searchedSeries: MutableLiveData<Resources<SeriesResponse>> = MutableLiveData()
+    var searchedSeriesPageNumber = 1
 
     init {
         getSeriesList()
@@ -27,6 +32,14 @@ class SeriesViewModel(
 
     }
 
+    fun getSearchedSeries(searchQuery: String,) = viewModelScope.launch {
+        searchedSeries.postValue(Resources.Loading())
+        val response = seriesRepository.getSearchedSeries(searchQuery, searchedSeriesPageNumber)
+        seriesList.postValue(handleSearchedSeriesResponse(response))
+    }
+
+
+
     private fun handleSeriesResponse(response: Response<SeriesResponse>) : Resources<SeriesResponse>{
         if(response.isSuccessful) {
             response.body()?.let {
@@ -35,4 +48,14 @@ class SeriesViewModel(
         }
         return Resources.Error(message = response.message())
     }
+
+    private fun handleSearchedSeriesResponse(response: Response<SeriesResponse>) : Resources<SeriesResponse>{
+        if(response.isSuccessful) {
+            response.body()?.let {
+                return Resources.Success(it)
+            }
+        }
+        return Resources.Error(message = response.message())
+    }
+
 }
