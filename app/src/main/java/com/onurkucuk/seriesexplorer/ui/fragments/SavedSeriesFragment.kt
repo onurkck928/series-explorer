@@ -1,50 +1,55 @@
 package com.onurkucuk.seriesexplorer.ui.fragments
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.adapters.SeriesFeedAdapter
-import com.onurkucuk.seriesexplorer.databinding.FragmentSeriesFeedBinding
+import com.onurkucuk.seriesexplorer.databinding.FragmentSavedSeriesBinding
 import com.onurkucuk.seriesexplorer.models.Series
 import com.onurkucuk.seriesexplorer.ui.MainActivity
 import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModel
 import com.onurkucuk.seriesexplorer.util.Constants.Companion.SEARCH_SERIES_TIME_DELAY
-import com.onurkucuk.seriesexplorer.util.Resources
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class SeriesFeedFragment : Fragment() {
+class SavedSeriesFragment : Fragment() {
 
     //View Binding
-    private var _binding: FragmentSeriesFeedBinding? = null
+    private var _binding: FragmentSavedSeriesBinding? = null
     private val binding get() = _binding!!
 
     // Properties
     lateinit var viewModel: SeriesViewModel
-    lateinit var seriesFeedAdapter: SeriesFeedAdapter
-    lateinit var seriesList: MutableList<Series>
-    lateinit var seriesRecyclerView: RecyclerView
+    companion object {
+        lateinit var savedSeriesFeedAdapter: SeriesFeedAdapter
+
+    }
+    lateinit var savedSeriesRecyclerView: RecyclerView
+    lateinit var savedSeriesList: MutableList<Series>
+
+    var isSavedSeriesInitialized = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentSeriesFeedBinding.inflate(inflater, container, false)
+        _binding = FragmentSavedSeriesBinding.inflate(inflater, container, false)
         val view = binding.root
+
         return view
 
     }
@@ -53,25 +58,23 @@ class SeriesFeedFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).viewModel
 
-        seriesList = SeriesViewModel.seriesList
-
-        viewModel.getSavedSeries()
-
+        savedSeriesList = viewModel.getSavedSeries().value?.toMutableList() ?: mutableListOf()
         setupRecyclerView()
 
-        seriesFeedAdapter.setOnItemClickListener {
+        savedSeriesFeedAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
-                putString("fragment", "SeriesFeedFragment")
-                putInt("position", seriesList.indexOf(it))
+                putString("fragment", "SavedSeriesFragment")
+                putSerializable("series", it)
             }
-            findNavController().navigate(R.id.action_seriesFeedFragment_to_seriesDetailsFragment, bundle)
+            findNavController().navigate(R.id.action_savedSeriesFragment_to_seriesDetailsFragment, bundle)
         }
 
-        observeSeriesList()
+        observeSavedSeriesList()
 
-        addSearchBar()
 
-        observeSearchedSeries()
+        //addSearchBar()
+
+        //observeSearchedSeries()
 
 
 
@@ -80,76 +83,14 @@ class SeriesFeedFragment : Fragment() {
 
     private fun setupRecyclerView() {
 
-        seriesFeedAdapter = SeriesFeedAdapter(seriesList, viewModel)
-        seriesRecyclerView = binding.seriesFeedRecycler
+        savedSeriesFeedAdapter = SeriesFeedAdapter(savedSeriesList, viewModel)
+        savedSeriesRecyclerView = binding.savedSeriesRecycler
 
-        seriesRecyclerView.adapter = seriesFeedAdapter
-        seriesRecyclerView.layoutManager = LinearLayoutManager(this.context)
+        savedSeriesRecyclerView.adapter = savedSeriesFeedAdapter
+        savedSeriesRecyclerView.layoutManager = LinearLayoutManager(this.context)
 
-        seriesRecyclerView.addOnScrollListener(this.scrollListener)
+        savedSeriesRecyclerView.addOnScrollListener(this.scrollListener)
     }
-
-    private fun observeSeriesList() {
-
-        viewModel.seriesList.observe(viewLifecycleOwner, Observer { response ->
-
-            when(response) {
-                is Resources.Success -> {
-                    hideProgressBar()
-                    response.data?.let {
-                        seriesFeedAdapter.addSeriesList(response.data.results)
-                        isLastPage = viewModel.seriesPageNumber == response.data.total_pages
-                        if(isLastPage) {
-                            seriesRecyclerView.setPadding(0,0,0,0)
-                        }
-                    }
-
-                }
-                is Resources.Error -> {
-                    hideProgressBar()
-                    response.message?.let {
-                        Toast.makeText(activity,"An error occurred! $it", Toast.LENGTH_LONG).show()
-                    }
-
-                }
-                is Resources.Loading -> {
-                    showProgressBar()
-                }
-            }
-
-        })
-    }
-
-    private fun observeSearchedSeries() {
-
-        viewModel.searchedSeries.observe(viewLifecycleOwner, Observer { response ->
-
-            when(response) {
-                is Resources.Success -> {
-                    hideProgressBar()
-                    response.data?.let {
-                        seriesFeedAdapter.addSeriesList(response.data.results)
-                        isLastPage = viewModel.searchedSeriesPageNumber == response.data.total_pages
-                        if(isLastPage) {
-                            seriesRecyclerView.setPadding(0,0,0,0)
-                        }
-                    }
-                }
-                is Resources.Error -> {
-                    hideProgressBar()
-                    response.message?.let {
-                        Toast.makeText(this.context,"An error occurred! $it", Toast.LENGTH_LONG).show()
-                    }
-
-                }
-                is Resources.Loading -> {
-                    showProgressBar()
-                }
-            }
-
-        })
-    }
-
 
     private fun addSearchBar() {
 
@@ -172,6 +113,20 @@ class SeriesFeedFragment : Fragment() {
         }
     }
 
+    private fun observeSavedSeriesList() {
+
+        viewModel.getSavedSeries().observe(requireActivity()) { newSavedSeriesList ->
+
+            savedSeriesFeedAdapter.addSeriesList(newSavedSeriesList)
+            if(!isSavedSeriesInitialized) {
+                newSavedSeriesList.forEach {
+                    SeriesViewModel.favouriteSeriesIdSet.add(it.id)
+                }
+                isSavedSeriesInitialized = true
+            }
+        }
+    }
+
     private fun hideProgressBar() {
         isLoading = false
     }
@@ -188,7 +143,7 @@ class SeriesFeedFragment : Fragment() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
-            val layoutManager = seriesRecyclerView.layoutManager as LinearLayoutManager
+            val layoutManager = savedSeriesRecyclerView.layoutManager as LinearLayoutManager
             val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
             val visibleItemCount = layoutManager.childCount
             val totalItemCount = layoutManager.itemCount
@@ -211,7 +166,7 @@ class SeriesFeedFragment : Fragment() {
                 }
                 isScrolling = false
 
-          }
+            }
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -226,4 +181,5 @@ class SeriesFeedFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

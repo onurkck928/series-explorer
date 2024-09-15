@@ -13,9 +13,12 @@ interface SeriesDao {
     @Insert
     suspend fun saveSeries(vararg series: Series)
 
-    @Delete
-    suspend fun removeSeries(series: Series)
+    @Query("DELETE FROM series WHERE id LIKE :seriesID")
+    suspend fun removeSeries(seriesID: Int)
 
     @Query("SELECT * FROM series")
     fun getSavedSeries(): LiveData<List<Series>>
+
+    @Query("SELECT * FROM series WHERE name LIKE :seriesName")
+    fun findFromSavedSeries(seriesName: String): LiveData<List<Series>>
 }

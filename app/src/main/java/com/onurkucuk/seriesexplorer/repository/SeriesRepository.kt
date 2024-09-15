@@ -17,7 +17,9 @@ class SeriesRepository(
     // Database
     suspend fun saveSeries(vararg series: Series) = seriesDatabase.getSeriesDao().saveSeries(*series)
 
-    suspend fun removeSeries(series: Series) = seriesDatabase.getSeriesDao().removeSeries(series)
+    suspend fun removeSeries(series: Series) = seriesDatabase.getSeriesDao().removeSeries(series.id)
 
     fun getSavedSeries() = seriesDatabase.getSeriesDao().getSavedSeries()
+
+    fun findFromSavedSeries(seriesName: String) = seriesDatabase.getSeriesDao().findFromSavedSeries(seriesName)
 }

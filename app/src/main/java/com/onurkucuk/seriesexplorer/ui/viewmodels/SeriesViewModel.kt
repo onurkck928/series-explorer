@@ -38,7 +38,7 @@ class SeriesViewModel(
     // The list that stores series
     companion object {
          val seriesList = mutableListOf<Series>()
-         val favouriteSeriesIdSet = mutableSetOf<Int>()
+         var favouriteSeriesIdSet = mutableSetOf<Int>()
     }
     init {
         getSeriesList()

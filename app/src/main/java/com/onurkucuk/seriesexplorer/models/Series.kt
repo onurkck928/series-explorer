@@ -2,6 +2,7 @@ package com.onurkucuk.seriesexplorer.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity
 data class Series(
@@ -20,4 +21,4 @@ data class Series(
     val poster_path: String,
     val vote_average: Double,
     val vote_count: Int
-)
+) : Serializable

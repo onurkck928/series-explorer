@@ -1,5 +1,6 @@
 package com.onurkucuk.seriesexplorer.ui.fragments
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -36,8 +37,23 @@ class SeriesDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).viewModel
+        val fragmentName = arguments?.getString("fragment","")
+        if(fragmentName.equals("SavedSeriesFragment")) {
 
-        series = SeriesViewModel.seriesList[arguments?.getInt("position") ?: 0]
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arguments?.getSerializable("series", Series::class.java).let {
+                    if (it != null) series = it
+                }
+            }
+            else {
+                arguments?.getSerializable("series").let {
+                    series = it as Series
+                }
+            }
+
+        } else if(fragmentName.equals("SeriesFeedFragment")) {
+            series = SeriesViewModel.seriesList[arguments?.getInt("position") ?: 0]
+        }
 
         binding.seriesNameTextView.text = series.name
         binding.originalNameTextView.text = series.original_name

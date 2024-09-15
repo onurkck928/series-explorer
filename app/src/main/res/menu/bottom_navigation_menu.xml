@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/seriesFeedFragment"
+        android:title="Series Feed"
+        android:icon="@drawable/baseline_home_24">
+
+    </item>
+
+    <item android:id="@+id/savedSeriesFragment"
+        android:title="Favorite Series"
+        android:icon="@drawable/baseline_favorite_24">
+
+    </item>
+</menu>

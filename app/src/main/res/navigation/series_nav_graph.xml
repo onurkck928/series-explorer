@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/series_nav_graph"
-    app:startDestination="@id/seriesFeedFragment">
+    app:startDestination="@id/savedSeriesFragment">
 
     <fragment
         android:id="@+id/seriesFeedFragment"
@@ -19,4 +19,13 @@
         android:name="com.onurkucuk.seriesexplorer.ui.fragments.SeriesDetailsFragment"
         android:label="fragment_series_details"
         tools:layout="@layout/fragment_series_details" />
+    <fragment
+        android:id="@+id/savedSeriesFragment"
+        android:name="com.onurkucuk.seriesexplorer.ui.fragments.SavedSeriesFragment"
+        android:label="fragment_saved_series"
+        tools:layout="@layout/fragment_saved_series" >
+        <action
+            android:id="@+id/action_savedSeriesFragment_to_seriesDetailsFragment"
+            app:destination="@id/seriesDetailsFragment" />
+    </fragment>
 </navigation>

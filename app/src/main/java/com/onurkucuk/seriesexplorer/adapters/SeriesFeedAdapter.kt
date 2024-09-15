@@ -6,12 +6,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.databinding.SeriesFeedRecyclerRowBinding
 import com.onurkucuk.seriesexplorer.models.Series
+import com.onurkucuk.seriesexplorer.ui.fragments.SavedSeriesFragment
 import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModel
 import com.onurkucuk.seriesexplorer.util.Constants.Companion.BASE_IMAGE_URL
 import com.squareup.picasso.Picasso
 
 
-class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerView.Adapter<SeriesFeedAdapter.SeriesFeedViewHolder>() {
+class SeriesFeedAdapter(
+    private val seriesList: MutableList<Series>,
+    private val viewModel: SeriesViewModel
+) : RecyclerView.Adapter<SeriesFeedAdapter.SeriesFeedViewHolder>() {
 
     inner class SeriesFeedViewHolder(private val itemBinding: SeriesFeedRecyclerRowBinding) : RecyclerView.ViewHolder(itemBinding.root) {
 
@@ -21,6 +25,7 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
 
             itemBinding.seriesNameText.text = series.name
             Picasso.get().load("${BASE_IMAGE_URL}${series.backdrop_path}").into(itemBinding.seriesImage)
+
 
             // Set the favourite icon filled if the series is saved, set it unfilled otherwise
             if(SeriesViewModel.favouriteSeriesIdSet.contains(series.id)) {
@@ -33,9 +38,14 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
                 if(SeriesViewModel.favouriteSeriesIdSet.contains(series.id)) {
                     SeriesViewModel.favouriteSeriesIdSet.remove(series.id)
                     itemBinding.favouriteIcon.setImageResource(R.drawable.baseline_favorite_border_24)
+                    viewModel.removeSeries(series)
+
+
                 } else {
                     SeriesViewModel.favouriteSeriesIdSet.add(series.id)
                     itemBinding.favouriteIcon.setImageResource(R.drawable.baseline_favorite_24)
+                    viewModel.saveSeries(series)
+
                 }
             }
         }
