@@ -86,6 +86,8 @@
                 app:layout_constraintStart_toEndOf="@id/posterImageView"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="@id/posterImageView"
+                android:ellipsize="end"
+                android:maxLines="20"
                 tools:text="This is an overview of the series" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

@@ -8,7 +8,6 @@ import android.net.NetworkCapabilities.TRANSPORT_ETHERNET
 import android.net.NetworkCapabilities.TRANSPORT_WIFI
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.onurkucuk.seriesexplorer.SeriesApplication
 import com.onurkucuk.seriesexplorer.models.Series
@@ -16,7 +15,6 @@ import com.onurkucuk.seriesexplorer.models.SeriesResponse
 import com.onurkucuk.seriesexplorer.repository.SeriesRepository
 import com.onurkucuk.seriesexplorer.util.Resources
 import kotlinx.coroutines.launch
-import okhttp3.internal.connection.ConnectInterceptor
 import okio.IOException
 import retrofit2.Response
 
@@ -40,6 +38,7 @@ class SeriesViewModel(
     // The list that stores series
     companion object {
          val seriesList = mutableListOf<Series>()
+         val favouriteSeriesIdSet = mutableSetOf<Int>()
     }
     init {
         getSeriesList()
@@ -52,8 +51,6 @@ class SeriesViewModel(
     fun getSearchedSeries(searchQuery: String) = viewModelScope.launch {
         safeGetSearchedSeriesCall(searchQuery)
     }
-
-
 
     private fun handleSeriesResponse(response: Response<SeriesResponse>) : Resources<SeriesResponse>{
         if(response.isSuccessful) {
@@ -100,6 +97,13 @@ class SeriesViewModel(
     }
 
     fun getSavedSeries() = seriesRepository.getSavedSeries()
+
+    fun isInFavouriteSeries(series: Series) : Boolean {
+        return when {
+            favouriteSeriesIdSet.contains(series.id) -> true
+            else -> false
+        }
+    }
 
     private suspend fun safeGetSeriesListCall() {
         seriesList.postValue(Resources.Loading())

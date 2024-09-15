@@ -3,8 +3,10 @@ package com.onurkucuk.seriesexplorer.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.onurkucuk.seriesexplorer.R
 import com.onurkucuk.seriesexplorer.databinding.SeriesFeedRecyclerRowBinding
 import com.onurkucuk.seriesexplorer.models.Series
+import com.onurkucuk.seriesexplorer.ui.viewmodels.SeriesViewModel
 import com.onurkucuk.seriesexplorer.util.Constants.Companion.BASE_IMAGE_URL
 import com.squareup.picasso.Picasso
 
@@ -15,9 +17,27 @@ class SeriesFeedAdapter(private val seriesList: MutableList<Series>) : RecyclerV
 
 
         fun onBind(series: Series) {
+
+
             itemBinding.seriesNameText.text = series.name
             Picasso.get().load("${BASE_IMAGE_URL}${series.backdrop_path}").into(itemBinding.seriesImage)
 
+            // Set the favourite icon filled if the series is saved, set it unfilled otherwise
+            if(SeriesViewModel.favouriteSeriesIdSet.contains(series.id)) {
+                itemBinding.favouriteIcon.setImageResource(R.drawable.baseline_favorite_24)
+            } else {
+                itemBinding.favouriteIcon.setImageResource(R.drawable.baseline_favorite_border_24)
+            }
+
+            itemBinding.favouriteIcon.setOnClickListener {
+                if(SeriesViewModel.favouriteSeriesIdSet.contains(series.id)) {
+                    SeriesViewModel.favouriteSeriesIdSet.remove(series.id)
+                    itemBinding.favouriteIcon.setImageResource(R.drawable.baseline_favorite_border_24)
+                } else {
+                    SeriesViewModel.favouriteSeriesIdSet.add(series.id)
+                    itemBinding.favouriteIcon.setImageResource(R.drawable.baseline_favorite_24)
+                }
+            }
         }
 
     }

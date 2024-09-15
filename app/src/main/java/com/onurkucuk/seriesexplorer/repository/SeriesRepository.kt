@@ -15,7 +15,6 @@ class SeriesRepository(
         SeriesRetrofitInstance.seriesAPI.searchForSeries(searchQuery, pageNumber)
 
     // Database
-
     suspend fun saveSeries(vararg series: Series) = seriesDatabase.getSeriesDao().saveSeries(*series)
 
     suspend fun removeSeries(series: Series) = seriesDatabase.getSeriesDao().removeSeries(series)
