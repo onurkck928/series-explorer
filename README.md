@@ -5,11 +5,15 @@ Welcome to the **Series Explorer App**, an Android application built with Kotlin
 ## Features
 
 - Browse a list of popular TV series fetched from the internet using TMDB API.
+  
   ![Browsing Feed](demoImages/SeriesFeed.png)
  - **Favorite Series**: Users can save their favorite series by clicking on the heart icons at the bottom of each series. These favorites can later be accessed through the bottom navigation menu.
+   
      ![Favorite Series Screen](demoImages/FavoriteSeries.png)
 
 - **Search Series**: Users can search for a TV series using the search bar and view the results in real-time.
+  
      ![Searching for series](demoImages/SearchSeries.png)
 - **Series Detail**: Clicking on a series will show the details of that series.
+  
      ![Detail screen for series](demoImages/SeriesDetail.png)
